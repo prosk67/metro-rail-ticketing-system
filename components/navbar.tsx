@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useRouter } from "next/navigation";
 import {
   Navbar as HeroUINavbar,
@@ -10,45 +10,55 @@ import {
   NavbarMenuItem,
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
-import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
-import { link as linkStyles } from "@heroui/theme";
-import NextLink from "next/link";
-import clsx from "clsx";
 
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-  Logo,
-} from "@/components/icons";
 import Image from "next/image";
 export const Navbar = () => {
   const router = useRouter();
+  const isLoggedIn = true;
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar
+      maxWidth="xl"
+      position="sticky"
+      className="bg-cyan-50 shadow-xl"
+    >
       <div className="w-full justify-between">
-        <div className="flex">
-          <Image
-            src={"/next.svg"}
-            alt="Logo"
-            width={50}
-            height={50}
-            className="mr-4"
-          ></Image>
-          <div className="w-full flex flex-col items-end">
+        <div className="flex h-14">
+          <div className="h-auto w-full text-4xl flex items-center font-black text-primary-500">{`_METRO_`}</div>
+          <div className="w-full flex flex-col justify-center items-end">
             <div className="grid grid-cols-2 gap-4">
-              <Button color="primary" variant="ghost" radius="full" onPress={() => router.push("/dashboard")}>
-                Log In
-              </Button>
-              <Button color="primary" variant="solid" radius="full">
-                Book a ticket
-              </Button>
+              {isLoggedIn ? (
+                <>
+                  <Button
+                    color="primary"
+                    variant="ghost"
+                    radius="full"
+                    onPress={() => router.push("/dashboard")}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="solid"
+                    radius="full"
+                    onPress={() => router.push("/signup")}
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div></div>
+                  <Button
+                    color="danger"
+                    variant="solid"
+                    radius="full"
+                    className=""
+                    onPress={() => router.push("/")}
+                  >
+                    Log Out
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
