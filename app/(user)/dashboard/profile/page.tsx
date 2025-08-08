@@ -1,6 +1,7 @@
 //@ts-nocheck
 "use client";
 import { useEffect } from "react";
+import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import {
   Dropdown,
@@ -13,12 +14,62 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 export default function Profile() {
+  const [user, setUser] = React.useState([]);
+  const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
+  const approvalRequest = async () => {
+    // Logic for requesting rapid pass
+    await fetch("/api/users", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: "PENDING",
+        id: localStorage.getItem("id"),
+      }),
+    });
+  };
+
+  useEffect(() => {
+    const getStatus = async () => {
+      try {
+        const response = await fetch(
+          `/api/rapid-pass/${localStorage.getItem("id")}`
+        );
+        const status = await response.json();
+        console.log(status);
+        if (!status) {
+          throw new Error("No status found");
+        }
+        switch (status[0].rapid_pass_status) {
+          case "PENDING":
+            setRapidPassStatus("PENDING");
+            break;
+          case "APPROVED":
+            setRapidPassStatus("APPROVED");
+            break;
+
+          default:
+            setRapidPassStatus("NOPASS");
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getStatus();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/users");
-        const users = response.json();
-        console.log(users);
+        const response = await fetch(
+          `/api/users/${localStorage.getItem("id")}`
+        );
+        const user = await response.json();
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        setUser(user);
+        console.log(user);
       } catch (e) {
         console.log(e);
       }
@@ -63,13 +114,36 @@ export default function Profile() {
           </nav>
 
           <div className="p-4 mt-auto">
-            <Button
-              color="primary"
-              variant="solid"
-              className="w-full rounded-lg"
-            >
-              Request Rapid Pass
-            </Button>
+            {rapidPassStatus === "PENDING" && (
+              <Button
+                isDisabled
+                color="primary"
+                variant="solid"
+                className="w-full rounded-lg"
+              >
+                Pending Approval
+              </Button>
+            )}
+            {rapidPassStatus === "APPROVED" && (
+              <Button
+                color="primary"
+                variant="solid"
+                className="w-full rounded-lg"
+                onPress={() => router.push("/dashboard/rapid-pass")}
+              >
+                Recharge Rapid Pass
+              </Button>
+            )}
+            {rapidPassStatus === "NOPASS" && (
+              <Button
+                color="primary"
+                variant="solid"
+                className="w-full rounded-lg"
+                onPress={approvalRequest}
+              >
+                Request Rapid Pass
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -79,8 +153,58 @@ export default function Profile() {
           <h1 className="text-5xl text-primary font-black">
             Welcome to your profile
           </h1>
+          <div>
+            {user.map((user) => (
+              <div key={user.email} className="mt-10">
+                <Input
+                  isDisabled
+                  className="max-w-xs"
+                  defaultValue={user.name}
+                  label="Name"
+                  type="name"
+                  color="primary"
+                  variant="faded"
+                />
+                <Input
+                  isDisabled
+                  className="max-w-xs mt-4"
+                  defaultValue={user.email}
+                  label="Email"
+                  type="email"
+                  color="primary"
+                  variant="faded"
+                />
+                <Input
+                  isDisabled
+                  className="max-w-xs mt-4"
+                  defaultValue={user.contactno}
+                  label="Phone Number"
+                  type="tel"
+                  color="primary"
+                  variant="faded"
+                />
+                <Input
+                  isDisabled
+                  className="max-w-xs mt-4"
+                  defaultValue={user.nid}
+                  label="NID"
+                  type="nid"
+                  color="primary"
+                  variant="faded"
+                />
+                <Input
+                  isDisabled
+                  className="max-w-xs mt-4"
+                  defaultValue={user.rapid_pass_status}
+                  label="Status of Rapid Pass"
+                  type="rapid_pass_status"
+                  color="primary"
+                  variant="faded"
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        <div></div>
       </main>
     </div>
   );

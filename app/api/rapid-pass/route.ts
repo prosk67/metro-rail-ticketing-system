@@ -3,15 +3,12 @@
 import { connect } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET() {
   try {
     const db = await connect();
-    const { id } = await params;
-    const query = "SELECT * FROM users WHERE user_id = ?";
-    const [ users ]= await db.query(query, [id]);
+
+    const query = "SELECT * FROM users";
+    const [users] = await db.query(query);
     return NextResponse.json(users);
   } catch (e) {
     console.log(e);
@@ -21,5 +18,3 @@ export async function GET(
     );
   }
 }
-
-

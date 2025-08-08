@@ -10,9 +10,12 @@ export async function GET(
   try {
     const db = await connect();
     const { id } = await params;
-    const query = "SELECT * FROM users WHERE user_id = ?";
-    const [ users ]= await db.query(query, [id]);
-    return NextResponse.json(users);
+    const query = `SELECT * 
+                   FROM trip
+                   JOIN mrt_pass ON trip.mrt_pass_id = mrt_pass.id 
+                   WHERE user_id = ?`;
+    const [trips] = await db.query(query, [id]);
+    return NextResponse.json(trips);
   } catch (e) {
     console.log(e);
     return NextResponse.json(
@@ -21,5 +24,3 @@ export async function GET(
     );
   }
 }
-
-

@@ -8,10 +8,58 @@ import {
   DropdownSection,
   DropdownItem,
 } from "@heroui/dropdown";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
+  const approvalRequest = async () => {
+    // Logic for requesting rapid pass
+    await fetch("/api/users", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: "PENDING",
+        id: localStorage.getItem("id"),
+      }),
+    });
+  };
+
+  useEffect(() => {
+    const getStatus = async () => {
+      try {
+        const response = await fetch(
+          `/api/rapid-pass/${localStorage.getItem("id")}`
+        );
+        const status = await response.json();
+        console.log(status);
+        if (!status) {
+          throw new Error("No status found");
+        }
+        switch (status[0].rapid_pass_status) {
+          case "PENDING":
+            setRapidPassStatus("PENDING");
+            break;
+          case "APPROVED":
+            setRapidPassStatus("APPROVED");
+            break;
+
+          default:
+            setRapidPassStatus("NOPASS");
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getStatus();
+  }, []);
+
+  //storing a dummy user data
+  useEffect(() => {
+    localStorage.setItem("id", 1);
+  }, []);
   const router = useRouter();
   const [selectedKeys, setSelectedKeys] = React.useState(
     new Set(["Select location"])
@@ -63,13 +111,36 @@ export default function Dashboard() {
           </nav>
 
           <div className="p-4 mt-auto">
-            <Button
-              color="primary"
-              variant="solid"
-              className="w-full rounded-lg"
-            >
-              Request Rapid Pass
-            </Button>
+            {rapidPassStatus === "PENDING" && (
+              <Button
+                isDisabled
+                color="primary"
+                variant="solid"
+                className="w-full rounded-lg"
+              >
+                Pending Approval
+              </Button>
+            )}
+            {rapidPassStatus === "APPROVED" && (
+              <Button
+                color="primary"
+                variant="solid"
+                className="w-full rounded-lg"
+                onPress={() => router.push("/dashboard/rapid-pass")}
+              >
+                Recharge Rapid Pass
+              </Button>
+            )}
+            {rapidPassStatus === "NOPASS" && (
+              <Button
+                color="primary"
+                variant="solid"
+                className="w-full rounded-lg"
+                onPress={approvalRequest}
+              >
+                Request Rapid Pass
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -78,7 +149,9 @@ export default function Dashboard() {
         <div className="max-w-4xl mx-auto">
           <div>
             <div>
-              <h1 className="text-5xl text-primary-500 font-black">Trip Summary</h1>
+              <h1 className="text-5xl text-primary-500 font-black">
+                Trip Summary
+              </h1>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4 pt-16">

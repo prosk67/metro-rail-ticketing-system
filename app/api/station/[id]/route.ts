@@ -10,9 +10,9 @@ export async function GET(
   try {
     const db = await connect();
     const { id } = await params;
-    const query = "SELECT * FROM users WHERE user_id = ?";
-    const [ users ]= await db.query(query, [id]);
-    return NextResponse.json(users);
+    const query = `SELECT location FROM station WHERE id = ?`;
+    const [ location ]  = await db.query(query, [id]);
+    return NextResponse.json(location);
   } catch (e) {
     console.log(e);
     return NextResponse.json(
@@ -21,5 +21,3 @@ export async function GET(
     );
   }
 }
-
-

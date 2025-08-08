@@ -1,7 +1,7 @@
 //@ts-nocheck
 "use client";
 import { Button } from "@heroui/button";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -12,11 +12,8 @@ import {
 import React from "react";
 import { useRouter } from "next/navigation";
 
-export default function Trip() {
+export default function RapidPass() {
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
-  const [trips, setTrips] = React.useState([]);
-  const [source, setSource] = React.useState([]);
-  const [destination, setDestination] = React.useState([]);
   const approvalRequest = async () => {
     // Logic for requesting rapid pass
     await fetch("/api/users", {
@@ -57,40 +54,59 @@ export default function Trip() {
         console.log(e);
       }
     };
-    const getTrips = async () => {
-      try {
-        const response = await fetch(`/api/trip/${localStorage.getItem("id")}`);
-        const trips = await response.json();
-        setTrips(trips);
-        console.log(trips);
-      } catch (e) {
-        console.log(e);
-      }
-    };
 
-    getStatus();
-    getTrips();
+
+    
   }, []);
 
-  useEffect(() => {
-    const getStation = async () => {
-      try {
-        const response = await fetch(`/api/station/${trips[0]?.src}`);
-        const station1 = await response.json();
-        const response2 = await fetch(`/api/station/${trips[0]?.dest}`);
-        const station2 = await response2.json();
-        console.log(station1, station2);
-        setSource(station1);
-        setDestination(station2);
-        console.log(source, destination);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    getStation();
-  }, [trips]);
-
+  const trips = [
+    {
+      id: 1,
+      from: "Agargaon",
+      to: "Uttara-North",
+      date: "2025-08-06",
+      time: "10:30 AM",
+      status: "Completed",
+      price: "150",
+    },
+    {
+      id: 2,
+      from: "Mirpur-10",
+      to: "Agargaon",
+      date: "2025-08-05",
+      time: "2:15 PM",
+      status: "Completed",
+      price: "200",
+    },
+    {
+      id: 3,
+      from: "Mirpur-11",
+      to: "Uttara-South",
+      date: "2025-08-05",
+      time: "2:15 PM",
+      status: "Completed",
+      price: "200",
+    },
+    {
+      id: 4,
+      from: "Agargaon",
+      to: "Uttara-Center",
+      date: "2025-08-05",
+      time: "2:15 PM",
+      status: "Completed",
+      price: "200",
+    },
+    {
+      id: 5,
+      from: "Mirpur-10",
+      to: "Agargaon",
+      date: "2025-08-05",
+      time: "2:15 PM",
+      status: "Completed",
+      price: "200",
+    },
+    // Add more trips as needed
+  ];
   const router = useRouter();
 
   return (
@@ -122,6 +138,7 @@ export default function Trip() {
               color="primary"
               className="w-full justify-start"
               variant="ghost"
+              onPress={() => router.push("/dashboard/trip")}
             >
               Trip History
             </Button>
@@ -131,9 +148,10 @@ export default function Trip() {
             {rapidPassStatus === "PENDING" && (
               <Button
                 isDisabled
-                color="default"
+                color="primary"
                 variant="solid"
                 className="w-full rounded-lg"
+                
               >
                 Pending Approval
               </Button>
@@ -143,7 +161,7 @@ export default function Trip() {
                 color="primary"
                 variant="solid"
                 className="w-full rounded-lg"
-                onPress={() => router.push("/dashboard/rapid-pass")}
+                onPress={()=> router.push("/dashboard/rapid-pass") }
               >
                 Recharge Rapid Pass
               </Button>
@@ -165,36 +183,18 @@ export default function Trip() {
       <main className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl text-primary-500 font-black">
-            Recent Visits
+            Rapid Pass
           </h1>
+          <div className="mt-10">
+          <div>
+            Available Balance
+          </div>
+          <div>
+            Recharge Amount
+          </div>
         </div>
-        <div className="mt-10">
-          {trips.map((trip) => (
-            <div
-              key={trip?.id}
-              className=" bg-white m-4 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-            >
-              <div className="flex justify-between items-center">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{source[0]?.location}</span>
-                    <span>→</span>
-                    <span className="font-semibold">
-                      {destination[0]?.location}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {trip?.issue_date}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg">{trip?.fare} BDT</div>
-                  <div className="text-sm text-green-600">completed</div>
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
+        
       </main>
     </div>
   );
