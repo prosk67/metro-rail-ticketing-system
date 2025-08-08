@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Aug 06, 2025 at 07:38 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: localhost:3306
+-- Generation Time: Aug 08, 2025 at 10:48 PM
+-- Server version: 8.0.30
+-- PHP Version: 8.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `mrt_ticketig_system`
+-- Database: `mrt_ticketing_system`
 --
 
 -- --------------------------------------------------------
@@ -28,11 +28,11 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admin` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `shift` time DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `pass` varchar(100) DEFAULT NULL
+  `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `pass` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -51,12 +51,12 @@ INSERT INTO `admin` (`id`, `name`, `shift`, `email`, `pass`) VALUES
 --
 
 CREATE TABLE `employee` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `shift` time DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `pass` varchar(100) DEFAULT NULL,
-  `station_id` int(11) DEFAULT NULL
+  `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `pass` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `station_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -84,10 +84,10 @@ INSERT INTO `employee` (`id`, `name`, `shift`, `email`, `pass`, `station_id`) VA
 --
 
 CREATE TABLE `mrt_pass` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `issue_date` date DEFAULT NULL,
   `validity` tinyint(1) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL
+  `user_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -111,7 +111,7 @@ INSERT INTO `mrt_pass` (`id`, `issue_date`, `validity`, `user_id`) VALUES
 --
 
 CREATE TABLE `rapid_pass` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `balance` float DEFAULT NULL,
   `validity` tinyint(1) DEFAULT NULL,
   `expiration_date` date DEFAULT NULL
@@ -134,8 +134,8 @@ INSERT INTO `rapid_pass` (`id`, `balance`, `validity`, `expiration_date`) VALUES
 --
 
 CREATE TABLE `station` (
-  `id` int(11) NOT NULL,
-  `location` varchar(100) DEFAULT NULL,
+  `id` int NOT NULL,
+  `location` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `availability` tinyint(1) DEFAULT NULL,
   `distance_from_start` float DEFAULT NULL,
   `end_of_line` tinyint(1) DEFAULT NULL
@@ -160,12 +160,21 @@ INSERT INTO `station` (`id`, `location`, `availability`, `distance_from_start`, 
 --
 
 CREATE TABLE `trip` (
-  `id` int(11) NOT NULL,
-  `src` int(11) DEFAULT NULL,
-  `dest` int(11) DEFAULT NULL,
-  `mrt_pass_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL,
+  `src` int DEFAULT NULL,
+  `dest` int DEFAULT NULL,
+  `mrt_pass_id` int DEFAULT NULL,
   `fare` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `trip`
+--
+
+INSERT INTO `trip` (`id`, `src`, `dest`, `mrt_pass_id`, `fare`) VALUES
+(1, 1, 2, 3, 50),
+(2, 2, 1, 5, 50),
+(3, 1, 3, 6, 60);
 
 -- --------------------------------------------------------
 
@@ -174,13 +183,13 @@ CREATE TABLE `trip` (
 --
 
 CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `nid` int(11) DEFAULT NULL,
-  `contactno` varchar(11) DEFAULT NULL,
-  `rapid_pass_id` int(11) DEFAULT NULL,
-  `rapid_pass_status` enum('NOPASS','PENDING','APPROVED','') DEFAULT 'NOPASS',
-  `email` varchar(100) DEFAULT NULL
+  `user_id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nid` int DEFAULT NULL,
+  `contactno` varchar(11) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rapid_pass_id` int DEFAULT NULL,
+  `rapid_pass_status` enum('NOPASS','PENDING','APPROVED','') COLLATE utf8mb4_general_ci DEFAULT 'NOPASS',
+  `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -202,13 +211,15 @@ INSERT INTO `users` (`user_id`, `name`, `nid`, `contactno`, `rapid_pass_id`, `ra
 -- Indexes for table `admin`
 --
 ALTER TABLE `admin`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
 
 --
 -- Indexes for table `employee`
 --
 ALTER TABLE `employee`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`),
   ADD KEY `station_id` (`station_id`);
 
 --
@@ -216,25 +227,29 @@ ALTER TABLE `employee`
 --
 ALTER TABLE `mrt_pass`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `rapid_pass`
 --
 ALTER TABLE `rapid_pass`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
 
 --
 -- Indexes for table `station`
 --
 ALTER TABLE `station`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
 
 --
 -- Indexes for table `trip`
 --
 ALTER TABLE `trip`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`),
   ADD KEY `src` (`src`),
   ADD KEY `dest` (`dest`),
   ADD KEY `mrt_pass_id` (`mrt_pass_id`);
@@ -244,6 +259,7 @@ ALTER TABLE `trip`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `user_id` (`user_id`),
   ADD KEY `rapid_pass_id` (`rapid_pass_id`);
 
 --
