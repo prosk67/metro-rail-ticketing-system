@@ -61,20 +61,7 @@ export default function Trip() {
     // Add more trips as needed
   ];
   const router = useRouter();
-  const [selectedKeys, setSelectedKeys] = React.useState(
-    new Set(["Select location"])
-  );
-  const [selectedKeys2, setSelectedKeys2] = React.useState(
-    new Set(["Select location"])
-  );
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
-    [selectedKeys]
-  );
-  const selectedValue2 = React.useMemo(
-    () => Array.from(selectedKeys2).join(", ").replace(/_/g, ""),
-    [selectedKeys2]
-  );
+
   return (
     <div className="flex ">
       <div className="w-64 bg-cyan-50 h-[40em] sticky top-0 shadow-lg rounded-xl">

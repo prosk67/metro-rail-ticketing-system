@@ -1,5 +1,6 @@
 //@ts-nocheck
 "use client";
+import { useEffect } from "react";
 import { Button } from "@heroui/button";
 import {
   Dropdown,
@@ -12,21 +13,20 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 export default function Profile() {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/users");
+        const users = response.json();
+        console.log(users);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchData();
+  }, []);
   const router = useRouter();
-  const [selectedKeys, setSelectedKeys] = React.useState(
-    new Set(["Select location"])
-  );
-  const [selectedKeys2, setSelectedKeys2] = React.useState(
-    new Set(["Select location"])
-  );
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
-    [selectedKeys]
-  );
-  const selectedValue2 = React.useMemo(
-    () => Array.from(selectedKeys2).join(", ").replace(/_/g, ""),
-    [selectedKeys2]
-  );
+
   return (
     <div className="flex ">
       <div className="w-64 bg-cyan-50 h-[40em] sticky top-0 shadow-lg rounded-xl">
@@ -80,6 +80,7 @@ export default function Profile() {
             Welcome to your profile
           </h1>
         </div>
+        <div></div>
       </main>
     </div>
   );
