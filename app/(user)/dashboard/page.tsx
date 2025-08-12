@@ -8,13 +8,20 @@ import {
   DropdownSection,
   DropdownItem,
 } from "@heroui/dropdown";
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  const router = useRouter();
+  const [selectedKeys, setSelectedKeys] = React.useState(
+    new Set(["Select location"])
+  );
+  const [selectedKeys2, setSelectedKeys2] = React.useState(
+    new Set(["Select location"])
+  );
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
+  const [fare, setFare] = React.useState(0);
   const approvalRequest = async () => {
-    // Logic for requesting rapid pass
     await fetch("/api/users", {
       method: "PUT",
       headers: {
@@ -26,6 +33,23 @@ export default function Dashboard() {
       }),
     });
   };
+
+  const calculateFare = () => {
+    if(selectedValue === "Select location" || selectedValue2 === "Select location") {
+      setFare(0);
+    }else{
+
+      const fareMap = {
+        "uttara-north": 0,
+        "uttara-center": 2,
+        "uttara-south": 5,
+        "mirpur-11": 8,
+        "mirpur-10": 9,
+        "agargaon": 12,
+      };
+      setFare(Math.abs(fareMap[selectedValue] - fareMap[selectedValue2]) * 10);
+    }
+  }
 
   useEffect(() => {
     const getStatus = async () => {
@@ -60,21 +84,18 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem("id", 1);
   }, []);
-  const router = useRouter();
-  const [selectedKeys, setSelectedKeys] = React.useState(
-    new Set(["Select location"])
-  );
-  const [selectedKeys2, setSelectedKeys2] = React.useState(
-    new Set(["Select location"])
-  );
+
   const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
+    () => Array.from(selectedKeys).join(", "),
     [selectedKeys]
   );
   const selectedValue2 = React.useMemo(
-    () => Array.from(selectedKeys2).join(", ").replace(/_/g, ""),
+    () => Array.from(selectedKeys2).join(", "),
     [selectedKeys2]
   );
+  useEffect(() => {
+    calculateFare();
+  }, [selectedValue, selectedValue2]);
   return (
     <div className="flex ">
       <div className="w-64 bg-cyan-50 h-[40em] sticky top-0 shadow-lg rounded-xl">
@@ -162,6 +183,7 @@ export default function Dashboard() {
                   <Button
                     className="capitalize bg-white border-2 border-black"
                     variant="bordered"
+                    onChange={calculateFare}
                   >
                     {selectedValue}
                   </Button>
@@ -193,6 +215,7 @@ export default function Dashboard() {
                   <Button
                     className="capitalize bg-black text-white"
                     variant="solid"
+                    onChange={calculateFare}
                   >
                     {selectedValue2}
                   </Button>
@@ -218,10 +241,10 @@ export default function Dashboard() {
           <div className="mt-62">
             <div className="flex justify-between border-t-1 w-full mx-auto pt-4">
               <div className="text-xl">Fare</div>
-              <div className="text-2xl font-semibold">123 BDT</div>
+              <div className="text-2xl font-semibold">{fare} BDT</div>
             </div>
             <div className="flex justify-end mt-4">
-              <Button color="success" className="text-white">
+              <Button color="success" className="text-white" >
                 Confirm
               </Button>
             </div>

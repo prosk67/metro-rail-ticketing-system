@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 08, 2025 at 10:48 PM
+-- Generation Time: Aug 11, 2025 at 04:55 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.6
 
@@ -29,11 +29,11 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admin` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
   `shift` time DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `pass` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `email` varchar(100) DEFAULT NULL,
+  `pass` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `admin`
@@ -56,7 +56,7 @@ CREATE TABLE `employee` (
   `shift` time DEFAULT NULL,
   `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `pass` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `station_id` int DEFAULT NULL
+  `station_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -64,18 +64,18 @@ CREATE TABLE `employee` (
 --
 
 INSERT INTO `employee` (`id`, `name`, `shift`, `email`, `pass`, `station_id`) VALUES
-(1, 'Syed Ahmed', '08:00:00', 'syed@uttara.com', 'pass001', 1),
-(2, 'Nadia Islam', '14:00:00', 'nadia@uttara.com', 'pass002', 1),
-(3, 'Raihan Kabir', '08:00:00', 'raihan@uttarac.com', 'pass003', 2),
-(4, 'Faria Hossain', '14:00:00', 'faria@uttarac.com', 'pass004', 2),
-(5, 'Hasib Rahman', '08:00:00', 'hasib@uttaras.com', 'pass005', 3),
-(6, 'Meherun Nahar', '14:00:00', 'meherun@uttaras.com', 'pass006', 3),
-(7, 'Zahidul Islam', '08:00:00', 'zahid@mirpur11.com', 'pass007', 4),
-(8, 'Sabina Yasmin', '14:00:00', 'sabina@mirpur11.com', 'pass008', 4),
-(9, 'Arif Chowdhury', '08:00:00', 'arif@mirpur10.com', 'pass009', 5),
-(10, 'Lubna Haque', '14:00:00', 'lubna@mirpur10.com', 'pass010', 5),
-(11, 'Mahmudul Hasan', '08:00:00', 'mahmud@agargaon.com', 'pass011', 6),
-(12, 'Rokeya Sultana', '14:00:00', 'rokeya@agargaon.com', 'pass012', 6);
+(1, 'Syed Ahmed', '08:00:00', 'syed@uttara.com', 'pass001', 0),
+(2, 'Nadia Islam', '14:00:00', 'nadia@uttara.com', 'pass002', 0),
+(3, 'Raihan Kabir', '08:00:00', 'raihan@uttarac.com', 'pass003', 0),
+(4, 'Faria Hossain', '14:00:00', 'faria@uttarac.com', 'pass004', 0),
+(5, 'Hasib Rahman', '08:00:00', 'hasib@uttaras.com', 'pass005', 0),
+(6, 'Meherun Nahar', '14:00:00', 'meherun@uttaras.com', 'pass006', 0),
+(7, 'Zahidul Islam', '08:00:00', 'zahid@mirpur11.com', 'pass007', 0),
+(8, 'Sabina Yasmin', '14:00:00', 'sabina@mirpur11.com', 'pass008', 0),
+(9, 'Arif Chowdhury', '08:00:00', 'arif@mirpur10.com', 'pass009', 0),
+(10, 'Lubna Haque', '14:00:00', 'lubna@mirpur10.com', 'pass010', 0),
+(11, 'Mahmudul Hasan', '08:00:00', 'mahmud@agargaon.com', 'pass011', 0),
+(12, 'Rokeya Sultana', '14:00:00', 'rokeya@agargaon.com', 'pass012', 0);
 
 -- --------------------------------------------------------
 
@@ -147,7 +147,7 @@ CREATE TABLE `station` (
 
 INSERT INTO `station` (`id`, `location`, `availability`, `distance_from_start`, `end_of_line`) VALUES
 (1, 'Uttara North', 1, 0, 1),
-(2, 'Uttara Center', 1, 2, 0),
+(2, 'Uttara Centre', 1, 2, 0),
 (3, 'Uttara South', 1, 5, 0),
 (4, 'Mirpur 11', 1, 8, 0),
 (5, 'Mirpur 10', 0, 9, 0),
@@ -161,20 +161,11 @@ INSERT INTO `station` (`id`, `location`, `availability`, `distance_from_start`, 
 
 CREATE TABLE `trip` (
   `id` int NOT NULL,
-  `src` int DEFAULT NULL,
-  `dest` int DEFAULT NULL,
+  `src` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dest` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `mrt_pass_id` int DEFAULT NULL,
   `fare` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `trip`
---
-
-INSERT INTO `trip` (`id`, `src`, `dest`, `mrt_pass_id`, `fare`) VALUES
-(1, 1, 2, 3, 50),
-(2, 2, 1, 5, 50),
-(3, 1, 3, 6, 60);
 
 -- --------------------------------------------------------
 
@@ -184,13 +175,13 @@ INSERT INTO `trip` (`id`, `src`, `dest`, `mrt_pass_id`, `fare`) VALUES
 
 CREATE TABLE `users` (
   `user_id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
   `nid` int DEFAULT NULL,
-  `contactno` varchar(11) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `contactno` varchar(11) DEFAULT NULL,
   `rapid_pass_id` int DEFAULT NULL,
-  `rapid_pass_status` enum('NOPASS','PENDING','APPROVED','') COLLATE utf8mb4_general_ci DEFAULT 'NOPASS',
-  `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `rapid_pass_status` enum('NOPASS','PENDING','APPROVED','') NOT NULL DEFAULT 'NOPASS',
+  `email` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
@@ -211,15 +202,13 @@ INSERT INTO `users` (`user_id`, `name`, `nid`, `contactno`, `rapid_pass_id`, `ra
 -- Indexes for table `admin`
 --
 ALTER TABLE `admin`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `id` (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `employee`
 --
 ALTER TABLE `employee`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `id` (`id`),
   ADD KEY `station_id` (`station_id`);
 
 --
@@ -227,29 +216,25 @@ ALTER TABLE `employee`
 --
 ALTER TABLE `mrt_pass`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `id` (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `rapid_pass`
 --
 ALTER TABLE `rapid_pass`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `id` (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `station`
 --
 ALTER TABLE `station`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `id` (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `trip`
 --
 ALTER TABLE `trip`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `id` (`id`),
   ADD KEY `src` (`src`),
   ADD KEY `dest` (`dest`),
   ADD KEY `mrt_pass_id` (`mrt_pass_id`);
@@ -259,38 +244,53 @@ ALTER TABLE `trip`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `user_id` (`user_id`),
   ADD KEY `rapid_pass_id` (`rapid_pass_id`);
 
 --
--- Constraints for dumped tables
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- Constraints for table `employee`
+-- AUTO_INCREMENT for table `admin`
+--
+ALTER TABLE `admin`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `employee`
 --
 ALTER TABLE `employee`
-  ADD CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`station_id`) REFERENCES `station` (`id`);
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- Constraints for table `mrt_pass`
+-- AUTO_INCREMENT for table `mrt_pass`
 --
 ALTER TABLE `mrt_pass`
-  ADD CONSTRAINT `mrt_pass_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- Constraints for table `trip`
+-- AUTO_INCREMENT for table `rapid_pass`
+--
+ALTER TABLE `rapid_pass`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `station`
+--
+ALTER TABLE `station`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `trip`
 --
 ALTER TABLE `trip`
-  ADD CONSTRAINT `trip_ibfk_1` FOREIGN KEY (`src`) REFERENCES `station` (`id`),
-  ADD CONSTRAINT `trip_ibfk_2` FOREIGN KEY (`dest`) REFERENCES `station` (`id`),
-  ADD CONSTRAINT `trip_ibfk_3` FOREIGN KEY (`mrt_pass_id`) REFERENCES `mrt_pass` (`id`);
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for table `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`rapid_pass_id`) REFERENCES `rapid_pass` (`id`);
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
