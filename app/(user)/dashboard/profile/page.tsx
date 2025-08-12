@@ -29,7 +29,26 @@ export default function Profile() {
       }),
     });
   };
+  const confirmTrip = async () => {
+    const response = await fetch("/api/trip", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: localStorage.getItem("id"),
+        src: selectedValue,
+        dest: selectedValue2,
+        fare: fare,
+      }),
+    });
 
+    if (response.ok) {
+      alert("Trip booked successfully!");
+    } else {
+      alert("Failed to book trip.");
+    }
+  };
   useEffect(() => {
     const getStatus = async () => {
       try {

@@ -1,5 +1,6 @@
 //@ts-nocheck
 "use client";
+import { addToast, ToastProvider } from "@heroui/toast";
 import { Button } from "@heroui/button";
 import {
   Dropdown,
@@ -12,6 +13,8 @@ import React, { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  const [isTripConfirmed, setIsTripConfirmed] = React.useState(false);
+  const [placement, setPlacement] = React.useState("top-center");
   const router = useRouter();
   const [selectedKeys, setSelectedKeys] = React.useState(
     new Set(["Select location"])
@@ -21,6 +24,24 @@ export default function Dashboard() {
   );
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
   const [fare, setFare] = React.useState(0);
+  const confirmTrip = async () => {
+    const response = await fetch("/api/trip", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: localStorage.getItem("id"),
+        src: selectedValue,
+        dest: selectedValue2,
+        fare: fare,
+      }),
+    });
+    if (response.ok) {
+      setIsTripConfirmed(true);
+      return true;
+    }
+  };
   const approvalRequest = async () => {
     await fetch("/api/users", {
       method: "PUT",
@@ -35,21 +56,23 @@ export default function Dashboard() {
   };
 
   const calculateFare = () => {
-    if(selectedValue === "Select location" || selectedValue2 === "Select location") {
+    if (
+      selectedValue === "Select location" ||
+      selectedValue2 === "Select location"
+    ) {
       setFare(0);
-    }else{
-
+    } else {
       const fareMap = {
         "uttara-north": 0,
         "uttara-center": 2,
         "uttara-south": 5,
         "mirpur-11": 8,
         "mirpur-10": 9,
-        "agargaon": 12,
+        agargaon: 12,
       };
       setFare(Math.abs(fareMap[selectedValue] - fareMap[selectedValue2]) * 10);
     }
-  }
+  };
 
   useEffect(() => {
     const getStatus = async () => {
@@ -98,6 +121,12 @@ export default function Dashboard() {
   }, [selectedValue, selectedValue2]);
   return (
     <div className="flex ">
+      <div className="fixed z-[100]">
+        <ToastProvider
+          placement={placement}
+          toastOffset={placement.includes("top") ? 60 : 0}
+        />
+      </div>
       <div className="w-64 bg-cyan-50 h-[40em] sticky top-0 shadow-lg rounded-xl">
         <div className="flex flex-col h-full">
           <div className="p-4 ">
@@ -196,11 +225,11 @@ export default function Dashboard() {
                   variant="flat"
                   onSelectionChange={setSelectedKeys}
                 >
-                  <DropdownItem key="uttara-north">Uttara-North</DropdownItem>
-                  <DropdownItem key="uttara-center">Uttara-Center</DropdownItem>
-                  <DropdownItem key="uttara-south">Uttara-South</DropdownItem>
-                  <DropdownItem key="mirpur-10">Mirpur-10</DropdownItem>
-                  <DropdownItem key="mirpur-11">Mirpur-11</DropdownItem>
+                  <DropdownItem key="uttara-north">Uttara North</DropdownItem>
+                  <DropdownItem key="uttara-center">Uttara Centre</DropdownItem>
+                  <DropdownItem key="uttara-south">Uttara South</DropdownItem>
+                  <DropdownItem key="mirpur-10">Mirpur 10</DropdownItem>
+                  <DropdownItem key="mirpur-11">Mirpur 11</DropdownItem>
                   <DropdownItem key="agargaon">Agargaon</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -228,11 +257,11 @@ export default function Dashboard() {
                   variant="flat"
                   onSelectionChange={setSelectedKeys2}
                 >
-                  <DropdownItem key="uttara-north">Uttara-North</DropdownItem>
-                  <DropdownItem key="uttara-center">Uttara-Center</DropdownItem>
-                  <DropdownItem key="uttara-south">Uttara-South</DropdownItem>
-                  <DropdownItem key="mirpur-10">Mirpur-10</DropdownItem>
-                  <DropdownItem key="mirpur-11">Mirpur-11</DropdownItem>
+                  <DropdownItem key="uttara-north">Uttara North</DropdownItem>
+                  <DropdownItem key="uttara-center">Uttara Centre</DropdownItem>
+                  <DropdownItem key="uttara-south">Uttara South</DropdownItem>
+                  <DropdownItem key="mirpur-10">Mirpur 10</DropdownItem>
+                  <DropdownItem key="mirpur-11">Mirpur 11</DropdownItem>
                   <DropdownItem key="agargaon">Agargaon</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -244,7 +273,22 @@ export default function Dashboard() {
               <div className="text-2xl font-semibold">{fare} BDT</div>
             </div>
             <div className="flex justify-end mt-4">
-              <Button color="success" className="text-white" >
+              <Button
+                color="success"
+                className="text-white"
+                key={"top-center"}
+                onPress={() => {
+                  setPlacement("top-center");
+                  const trip = confirmTrip();
+                  if (trip) {
+                    addToast({
+                      title: "Trip Confirmed",
+                      description: `Your trip from ${selectedValue} to ${selectedValue2} has been confirmed.`,
+                      color: "success",
+                    });
+                  }
+                }}
+              >
                 Confirm
               </Button>
             </div>
