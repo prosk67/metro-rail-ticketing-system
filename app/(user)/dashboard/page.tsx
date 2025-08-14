@@ -68,7 +68,7 @@ export default function Dashboard() {
         "uttara-south": 5,
         "mirpur-11": 8,
         "mirpur-10": 9,
-        agargaon: 12,
+        "agargaon": 12,
       };
       setFare(Math.abs(fareMap[selectedValue] - fareMap[selectedValue2]) * 10);
     }

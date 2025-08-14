@@ -12,8 +12,9 @@ export async function GET(
     const { id } = await params;
     const query = `SELECT * 
                    FROM trip
-                   JOIN mrt_pass ON trip.mrt_pass_id = mrt_pass.id 
-                   WHERE user_id = ?`;
+                   JOIN mrt_pass ON trip.mrt_pass_id = mrt_pass.id
+                   
+                   WHERE mrt_pass.user_id = ?`;
     const [trips] = await db.query(query, [id]);
     return NextResponse.json(trips);
   } catch (e) {

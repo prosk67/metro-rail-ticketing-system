@@ -10,7 +10,7 @@ export async function GET(
   try {
     const db = await connect();
     const { id } = await params;
-    const query = "SELECT * FROM users WHERE user_id = ?";
+    const query = "SELECT * FROM users WHERE id = ?";
     const [ users ]= await db.query(query, [id]);
     return NextResponse.json(users);
   } catch (e) {

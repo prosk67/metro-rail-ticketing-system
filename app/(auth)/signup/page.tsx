@@ -1,21 +1,84 @@
-import { signup } from '@/app/actions/auth'
-
+"use client";
+import { signup } from "../../actions/auth";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { Form } from "@heroui/form";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 export default function Signup() {
+ 
+  const router = useRouter();
+  const handleSignup = async (formData: FormData) => {
+    const result = await signup(formData);
+    if (result?.redirect) {
+      router.push(result.redirect);
+    }
+    if (result?.status == 404) {
+
+    }
+  };
+
   return (
-    <form action={signup}>
-      <div>
-        <label htmlFor="name">Name</label>
-        <input id="name" name="name" placeholder="Name" />
+    <div className="h-full w-full flex flex-col items-center justify-center">
+      <div className="h-[10vh] text-primary font-black text-6xl">
+          _Metro_
       </div>
-      <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" name="email" type="email" placeholder="Email" />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" />
-      </div>
-      <button type="submit">Sign Up</button>
-    </form>
+      <Form
+        className="w-full max-w-xs flex flex-col gap-4"
+        
+        onSubmit={(e) => {
+          e.preventDefault();
+          
+          handleSignup(new FormData(e.currentTarget));
+          
+        }}
+      >
+        <Input
+          isRequired
+          errorMessage="Please enter a valid email"
+          label="Email"
+          labelPlacement="outside"
+          name="email"
+          placeholder="Enter your email"
+          type="email"
+        />
+        <Input
+          isRequired
+          errorMessage="Wrong Password or Email"
+          label="Password"
+          labelPlacement="outside"
+          name="password"
+          placeholder="Enter your password"
+          type="password"
+        />
+        <Input
+          isRequired
+          errorMessage="Wrong Password or Email"
+          label="Password"
+          labelPlacement="outside"
+          name="password"
+          placeholder="Enter your password"
+          type="password"
+        />
+        <Input
+          isRequired
+          errorMessage="Wrong Password or Email"
+          label="Password"
+          labelPlacement="outside"
+          name="password"
+          placeholder="Enter your password"
+          type="password"
+        />
+      
+
+        <div className="w-full flex justify-end">
+          <Button color="primary" variant="ghost" radius="full" type="submit">
+            Sign Up
+          </Button>
+         
+        </div>
+      </Form>
+
+    </div>
   );
 }

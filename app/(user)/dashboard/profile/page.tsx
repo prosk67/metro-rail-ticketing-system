@@ -196,7 +196,7 @@ export default function Profile() {
                 <Input
                   isDisabled
                   className="max-w-xs mt-4"
-                  defaultValue={user.contactno}
+                  defaultValue={user.contact}
                   label="Phone Number"
                   type="tel"
                   color="primary"

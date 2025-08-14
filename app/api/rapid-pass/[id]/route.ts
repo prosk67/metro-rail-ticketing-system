@@ -10,7 +10,7 @@ export async function GET(
   try {
     const db = await connect();
     const { id } = await params;
-    const query = "SELECT rapid_pass_status FROM users WHERE user_id = ?";
+    const query = "SELECT rapid_pass_status FROM users WHERE id = ?";
     const [ status ]= await db.query(query, [id]);
     return NextResponse.json(status);
   } catch (e) {
