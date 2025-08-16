@@ -21,10 +21,10 @@ export async function login(formData: FormData) {
     password: formData.get("password"),
   };
   try {
-    const query = "SELECT email FROM users where email = ?";
-    const user = await db.query(query, req.email);
-    console.log(user[0][0].email)
-    if (!user[0][0].email) {
+    const query = "SELECT id FROM users where email = ? AND password = ?";
+    const user = await db.query(query, [req.email, req.password]);
+    console.log(user[0][0].id)
+    if (!user[0][0].id) {
       
       return {
         error: "User does not exist",

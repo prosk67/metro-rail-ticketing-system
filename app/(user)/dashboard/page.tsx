@@ -13,6 +13,7 @@ import React, { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  
   const [isTripConfirmed, setIsTripConfirmed] = React.useState(false);
   const [placement, setPlacement] = React.useState("top-center");
   const router = useRouter();
@@ -76,6 +77,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const getStatus = async () => {
+
       try {
         const response = await fetch(
           `/api/rapid-pass/${localStorage.getItem("id")}`

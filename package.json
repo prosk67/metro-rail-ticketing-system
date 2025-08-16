@@ -2,6 +2,7 @@
   "name": "next-app-template",
   "version": "0.0.1",
   "private": true,
+  
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -10,6 +11,7 @@
   },
   "dependencies": {
     "@heroui/button": "2.2.24",
+    "@heroui/chip": "^2.2.20",
     "@heroui/code": "2.2.18",
     "@heroui/drawer": "^2.2.21",
     "@heroui/dropdown": "^2.3.24",

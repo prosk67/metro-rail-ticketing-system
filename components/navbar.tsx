@@ -12,9 +12,12 @@ import {
 import { Button } from "@heroui/button";
 
 import Image from "next/image";
+import { useEffect } from "react";
 export const Navbar = () => {
+  
   const router = useRouter();
   const isLoggedIn = true;
+  
   return (
     <HeroUINavbar
       maxWidth="xl"
@@ -28,6 +31,7 @@ export const Navbar = () => {
             <div className="grid grid-cols-2 gap-4">
               {isLoggedIn ? (
                 <>
+             
                   <Button
                     color="primary"
                     variant="ghost"

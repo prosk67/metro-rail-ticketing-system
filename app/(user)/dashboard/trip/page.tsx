@@ -17,6 +17,7 @@ export default function Trip() {
   const [trips, setTrips] = React.useState([]);
   const [source, setSource] = React.useState([]);
   const [destination, setDestination] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
   const approvalRequest = async () => {
     // Logic for requesting rapid pass
     await fetch("/api/users", {
@@ -62,35 +63,32 @@ export default function Trip() {
         const response = await fetch(`/api/trip/${localStorage.getItem("id")}`);
         const trips = await response.json();
         setTrips(trips);
-        console.log(trips);
+        let src = [];
+        let dest = [];
+
+        trips?.map(async (trip) => {
+          const stationMap = {
+            1: "Uttara North",
+            2: "Uttara Center",
+            3: "Uttara South",
+            4: "Mirpur 11",
+            5: "Mirpur 10",
+            6: "Agargaon",
+          };
+
+          source.push(stationMap[`${trip?.src}`]);
+          destination.push(stationMap[`${trip?.dest}`]);
+        });
+        
       } catch (e) {
         console.log(e);
       }
     };
-
     getStatus();
     getTrips();
+    setIsLoading(false);
   }, []);
-
-  useEffect(() => {
-    const getStation = async () => {
-      try {
-        const response = await fetch(`/api/station/${trips[0]?.src}`);
-        const station1 = await response.json();
-        const response2 = await fetch(`/api/station/${trips[0]?.dest}`);
-        const station2 = await response2.json();
-        console.log(station1, station2);
-        setSource(station1);
-        setDestination(station2);
-        console.log(source, destination);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    getStation();
-  }, [trips]);
-
+  useEffect(() => {}, []);
   const router = useRouter();
 
   return (
@@ -169,31 +167,37 @@ export default function Trip() {
           </h1>
         </div>
         <div className="mt-10">
-          {trips.map((trip) => (
-            <div
-              key={trip?.id}
-              className=" bg-white m-4 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-            >
-              <div className="flex justify-between items-center">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{source[0]?.location}</span>
-                    <span>→</span>
-                    <span className="font-semibold">
-                      {destination[0]?.location}
-                    </span>
+          {isLoading ? (
+            <div>Loading</div>
+          ) : (
+            trips.map((trip, index) => (
+              <div
+                key={trip?.id}
+                className=" bg-white m-4 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
+                <div className="flex justify-between items-center">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">
+                        {source[index] && source[index]}
+                      </span>
+                      <span>→</span>
+                      <span className="font-semibold">
+                        {destination[index] && destination[index]}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {(new Date(trip?.issue_date)).toLocaleDateString()}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    {trip?.issue_date}
+                  <div className="text-right">
+                    <div className="font-bold text-lg">{trip?.fare} BDT</div>
+                    <div className="text-sm text-green-600">completed</div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg">{trip?.fare} BDT</div>
-                  <div className="text-sm text-green-600">completed</div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </main>
     </div>

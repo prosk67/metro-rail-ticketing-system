@@ -1,7 +1,12 @@
 //@ts-nocheck
 "use client";
 import { Button } from "@heroui/button";
+import { CheckIcon } from "@/components/CheckIcon";
+import { Chip } from "@heroui/chip";
 import { useEffect } from "react";
+import { Input } from "@heroui/input";
+import { Form } from "@heroui/form"
+import { addToast, ToastProvider } from "@heroui/toast";
 import {
   Dropdown,
   DropdownTrigger,
@@ -11,9 +16,25 @@ import {
 } from "@heroui/dropdown";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { transaction } from "../../../actions/transaction"
 
 export default function RapidPass() {
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
+  const [placement, setPlacement] = React.useState("top-center");
+  const [isTransactionOk, setIsTransactionOk] = React.useState(false);
+
+  const handleTransaction =async (formData: FormData) => {
+    const data = await transaction(formData);
+
+    if(status){
+      setIsTransactionOk(true);
+      router.push("/");
+
+    }else{
+      throw new Error();
+    }
+
+  }
   const approvalRequest = async () => {
     // Logic for requesting rapid pass
     await fetch("/api/users", {
@@ -55,62 +76,19 @@ export default function RapidPass() {
       }
     };
 
-
-    
+    getStatus();
   }, []);
 
-  const trips = [
-    {
-      id: 1,
-      from: "Agargaon",
-      to: "Uttara-North",
-      date: "2025-08-06",
-      time: "10:30 AM",
-      status: "Completed",
-      price: "150",
-    },
-    {
-      id: 2,
-      from: "Mirpur-10",
-      to: "Agargaon",
-      date: "2025-08-05",
-      time: "2:15 PM",
-      status: "Completed",
-      price: "200",
-    },
-    {
-      id: 3,
-      from: "Mirpur-11",
-      to: "Uttara-South",
-      date: "2025-08-05",
-      time: "2:15 PM",
-      status: "Completed",
-      price: "200",
-    },
-    {
-      id: 4,
-      from: "Agargaon",
-      to: "Uttara-Center",
-      date: "2025-08-05",
-      time: "2:15 PM",
-      status: "Completed",
-      price: "200",
-    },
-    {
-      id: 5,
-      from: "Mirpur-10",
-      to: "Agargaon",
-      date: "2025-08-05",
-      time: "2:15 PM",
-      status: "Completed",
-      price: "200",
-    },
-    // Add more trips as needed
-  ];
   const router = useRouter();
 
   return (
     <div className="flex ">
+      <div className="fixed z-[100]">
+        <ToastProvider
+          placement={placement}
+          toastOffset={placement.includes("top") ? 60 : 0}
+        />
+      </div>
       <div className="w-64 bg-cyan-50 h-[40em] sticky top-0 shadow-lg rounded-xl">
         <div className="flex flex-col h-full">
           <div className="p-4 ">
@@ -151,7 +129,6 @@ export default function RapidPass() {
                 color="primary"
                 variant="solid"
                 className="w-full rounded-lg"
-                
               >
                 Pending Approval
               </Button>
@@ -161,7 +138,7 @@ export default function RapidPass() {
                 color="primary"
                 variant="solid"
                 className="w-full rounded-lg"
-                onPress={()=> router.push("/dashboard/rapid-pass") }
+                onPress={() => router.push("/dashboard/rapid-pass")}
               >
                 Recharge Rapid Pass
               </Button>
@@ -182,19 +159,60 @@ export default function RapidPass() {
 
       <main className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl text-primary-500 font-black">
-            Rapid Pass
-          </h1>
+          <h1 className="text-5xl text-primary-500 font-black">Rapid Pass</h1>
           <div className="mt-10">
-          <div>
-            Available Balance
+            <div>
+              <Chip
+                color="success"
+                startContent={<CheckIcon size={18} />}
+                variant="bordered"
+                size="lg"
+              >
+                Available Balance
+              </Chip>
+              <div className="p-8 h-20 font-extrabold text-5xl">
+                500 <span className="text-sm text-success">BDT</span>
+              </div>
+            </div>
           </div>
-          <div>
-            Recharge Amount
+          <div className="mt-20 w-full">
+            <Form
+              className="flex "
+              onSubmit={(e)=>{
+                e.preventDefault();
+                handleTransaction(new FormData(e.currentTarget));
+              }}
+            >
+              <Input
+                className="w-60"
+                name="amount"
+                label="Recharge"
+                placeholder="Enter Amount"
+                radius="lg"
+                type="number"
+                
+              />
+              <Button
+                color="success"
+                className="text-white"
+                key={"top-center"}
+                onPress={() => {
+                  setPlacement("top-center");
+                  
+                  if (isTransactionOk) {
+                    addToast({
+                      title: "Trip Confirmed",
+                      description: ``,
+                      color: "success",
+                    });
+                  }
+                }}
+              >
+                Recharge
+              </Button>
+            </Form>
           </div>
         </div>
-        </div>
-        
       </main>
     </div>
   );
