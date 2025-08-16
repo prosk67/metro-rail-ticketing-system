@@ -54,6 +54,7 @@ export default function Dashboard() {
         id: localStorage.getItem("id"),
       }),
     });
+    router.push("/dashboard");
   };
 
   const calculateFare = () => {
