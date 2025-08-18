@@ -220,6 +220,15 @@ export default function Profile() {
                   color="primary"
                   variant="faded"
                 />
+                <Input
+                  isDisabled
+                  className="max-w-xs mt-4"
+                  defaultValue={user.balance}
+                  label="Rapid Pass Balance"
+                  type="balance"
+                  color="primary"
+                  variant="faded"
+                />
               </div>
             ))}
           </div>
