@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Navbar as HeroUINavbar,
@@ -10,14 +11,23 @@ import {
   NavbarMenuItem,
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
-
 import Image from "next/image";
-import { useEffect } from "react";
+
 export const Navbar = () => {
-  
   const router = useRouter();
-  const isLoggedIn = true;
-  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const logout=() => {
+    localStorage.removeItem("id");
+    setIsLoggedIn(false);
+    router.push("/");
+  };
+
+  useEffect(() => {
+    const userId = localStorage.getItem("id");
+    setIsLoggedIn(!!userId);
+  },[]);
+
   return (
     <HeroUINavbar
       maxWidth="xl"
@@ -31,12 +41,22 @@ export const Navbar = () => {
             <div className="grid grid-cols-2 gap-4">
               {isLoggedIn ? (
                 <>
-             
+                  <Button
+                    color="primary"
+                    variant="solid"
+                    radius="full"
+                    onPress={() => logout()}
+                  >
+                    Log Out
+                  </Button>
+                </>
+              ) : (
+                <>
                   <Button
                     color="primary"
                     variant="ghost"
                     radius="full"
-                    onPress={() => router.push("/dashboard")}
+                    onPress={() => router.push("/login")}
                   >
                     Log In
                   </Button>
@@ -47,19 +67,6 @@ export const Navbar = () => {
                     onPress={() => router.push("/signup")}
                   >
                     Sign Up
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <div></div>
-                  <Button
-                    color="danger"
-                    variant="solid"
-                    radius="full"
-                    className=""
-                    onPress={() => router.push("/")}
-                  >
-                    Log Out
                   </Button>
                 </>
               )}

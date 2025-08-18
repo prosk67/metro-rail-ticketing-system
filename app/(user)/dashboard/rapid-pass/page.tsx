@@ -17,12 +17,13 @@ import {
 import React from "react";
 import { useRouter } from "next/navigation";
 import { transaction } from "../../../actions/transaction"
-
+import { useState } from "react";
 export default function RapidPass() {
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
   const [placement, setPlacement] = React.useState("top-center");
   const [isTransactionOk, setIsTransactionOk] = React.useState(false);
-
+  const [balance, setBalance] = useState<number | null>(null);
+  const [user, setUser] = React.useState([]);
   const handleTransaction =async (formData: FormData) => {
     const data = await transaction(formData);
 
@@ -79,6 +80,45 @@ export default function RapidPass() {
     getStatus();
   }, []);
 
+  // useEffect(() => {
+  //   // Fetch balance
+  //   const fetchBalance = async () => {
+  //     try {
+  //       const res = await fetch(`/api/rapid-pass/balance/${localStorage.getItem("id")}`);
+  //       const data = await res.json();
+  //       if (data.balance !== undefined) {
+  //         setBalance(data.balance);
+  //       }
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
+
+  //   fetchBalance();
+  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `/api/rapid-pass/balance/${localStorage.getItem("id")}`
+          // `/api/users/${localStorage.getItem("id")}`
+        );
+        
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const user = await response.json();
+        setUser(user);
+        console.log(user);
+        if (user.balance !== undefined) {
+          setBalance(user.balance);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchData();
+  }, []);
   const router = useRouter();
 
   return (
@@ -164,14 +204,18 @@ export default function RapidPass() {
             <div>
               <Chip
                 color="success"
-                startContent={<CheckIcon size={18} />}
                 variant="bordered"
                 size="lg"
               >
                 Available Balance
               </Chip>
               <div className="p-8 h-20 font-extrabold text-5xl">
-                500 <span className="text-sm text-success">BDT</span>
+                {user.map((user) => (
+                  <div key={user.id}>
+                  {user.balance}  <span className="text-sm text-success">BDT</span>
+                  </div>
+                ))}
+                
               </div>
             </div>
           </div>
