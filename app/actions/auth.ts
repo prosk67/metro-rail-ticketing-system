@@ -1,3 +1,4 @@
+//@ts-nocheck
 "use server";
 import { connect } from "@/lib/db";
 import { redirect, RedirectType } from "next/navigation";

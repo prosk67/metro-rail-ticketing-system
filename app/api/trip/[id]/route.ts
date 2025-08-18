@@ -14,7 +14,9 @@ export async function GET(
                    FROM trip
                    JOIN mrt_pass ON trip.mrt_pass_id = mrt_pass.id
                    
-                   WHERE mrt_pass.user_id = ?`;
+                   WHERE mrt_pass.user_id = ?
+                   ORDER BY mrt_pass.issue_date DESC
+                   LIMIT 4`;
     const [trips] = await db.query(query, [id]);
     return NextResponse.json(trips);
   } catch (e) {
