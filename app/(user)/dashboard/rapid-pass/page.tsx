@@ -5,7 +5,7 @@ import { CheckIcon } from "@/components/CheckIcon";
 import { Chip } from "@heroui/chip";
 import { useEffect } from "react";
 import { Input } from "@heroui/input";
-import { Form } from "@heroui/form"
+import { Form } from "@heroui/form";
 import { addToast, ToastProvider } from "@heroui/toast";
 import {
   Dropdown,
@@ -16,26 +16,40 @@ import {
 } from "@heroui/dropdown";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { transaction } from "../../../actions/transaction"
+import { transaction } from "../../../actions/transaction";
 import { useState } from "react";
 export default function RapidPass() {
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
+  const [id, setId] = React.useState();
   const [placement, setPlacement] = React.useState("top-center");
   const [isTransactionOk, setIsTransactionOk] = React.useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const [user, setUser] = React.useState([]);
-  const handleTransaction =async (formData: FormData) => {
+  const handleTransaction = async (formData: FormData) => {
+    if(formData.get("amount")<0){
+      addToast({
+          title: "Wrong Input",
+          description: "Recharge amount must be greater than 0",
+          color: "danger",
+        });
+      return;
+    }
     const data = await transaction(formData);
 
-    if(status){
+    if (data.status == 200) {
       setIsTransactionOk(true);
-      router.push("/");
-
-    }else{
+      if (isTransactionOk) {
+        addToast({
+          title: "Success",
+          description: "Recharge was successful",
+          color: "success",
+        });
+      }
+      
+    } else {
       throw new Error();
     }
-
-  }
+  };
   const approvalRequest = async () => {
     // Logic for requesting rapid pass
     await fetch("/api/users", {
@@ -51,6 +65,7 @@ export default function RapidPass() {
   };
 
   useEffect(() => {
+    setId(localStorage.getItem("id"));
     const getStatus = async () => {
       try {
         const response = await fetch(
@@ -222,35 +237,31 @@ export default function RapidPass() {
           <div className="mt-20 w-full">
             <Form
               className="flex "
-              onSubmit={(e)=>{
+              onSubmit={(e) => {
                 e.preventDefault();
                 handleTransaction(new FormData(e.currentTarget));
+                
               }}
             >
+              <Input type="hidden" name="id" value={id} />
               <Input
+                isRequired
                 className="w-60"
                 name="amount"
-                label="Recharge"
+                label="Recharge (BDT)"
                 placeholder="Enter Amount"
                 radius="lg"
                 type="number"
+                size="lg"
                 
               />
               <Button
+                
                 color="success"
-                className="text-white"
+                className="text-white mt-4"
                 key={"top-center"}
-                onPress={() => {
-                  setPlacement("top-center");
-                  
-                  if (isTransactionOk) {
-                    addToast({
-                      title: "Trip Confirmed",
-                      description: ``,
-                      color: "success",
-                    });
-                  }
-                }}
+                type="submit"
+                
               >
                 Recharge
               </Button>

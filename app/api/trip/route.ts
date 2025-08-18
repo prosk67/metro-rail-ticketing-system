@@ -1,7 +1,9 @@
 //@ts-nocheck
 "use server";
 import { connect } from "@/lib/db";
+import { deduction } from "../../actions/transaction";
 import { NextResponse } from "next/server";
+import { parse } from "path";
 function toTitleCase(str: string) {
   return str
     .split("-")
@@ -30,31 +32,37 @@ export async function POST(request: Request) {
     const body = await request.json();
     const source = toTitleCase(body.src);
     const destination = toTitleCase(body.dest);
-    const [src] = await db.query(
-      "SELECT id FROM station WHERE location = ?",
-      source
-    );
-    const [dest] = await db.query(
-      "SELECT id FROM station WHERE location = ?",
-      destination
-    );
+    const transactionState = await deduction(body.id, parseInt(body.fare));
 
-    
-    const query =
-      "INSERT INTO mrt_pass (`issue_date`, `validity`,`user_id`) values (?,?,?)";
-    const [mrt] = await db.query(query, [new Date(), 1, body.id]);
+    if (transactionState?.status == 200) {
+      const [src] = await db.query(
+        "SELECT id FROM station WHERE location = ?",
+        source
+      );
+      const [dest] = await db.query(
+        "SELECT id FROM station WHERE location = ?",
+        destination
+      );
 
-    const query2 =
-      "INSERT INTO trip (`src`, `dest`, `fare`,`mrt_pass_id`) values (?,?,?,?)";
+      const query =
+        "INSERT INTO mrt_pass (`issue_date`, `validity`,`user_id`) values (?,?,?)";
+      const [mrt] = await db.query(query, [new Date(), 1, body.id]);
 
-    const [trip] = await db.query(query2, [
-      src[0].id,
-      dest[0].id,
-      parseInt(body.fare),
-      mrt.insertId,
-    ]);
+      const query2 =
+        "INSERT INTO trip (`src`, `dest`, `fare`,`mrt_pass_id`) values (?,?,?,?)";
 
-    return NextResponse.json(mrt.insertId);
+      const [trip] = await db.query(query2, [
+        src[0].id,
+        dest[0].id,
+        parseInt(body.fare),
+        mrt.insertId,
+      ]);
+
+      return NextResponse.json(mrt.insertId);
+    }else{
+      throw new Error();
+    }
+
   } catch (e) {
     console.log(e);
     return NextResponse.json(
@@ -63,6 +71,7 @@ export async function POST(request: Request) {
     );
   }
 }
+
 export async function PUT(request: Request) {
   try {
     const db = await connect();

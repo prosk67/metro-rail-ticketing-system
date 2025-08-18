@@ -13,7 +13,6 @@ import React, { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
-  
   const [isTripConfirmed, setIsTripConfirmed] = React.useState(false);
   const [placement, setPlacement] = React.useState("top-center");
   const router = useRouter();
@@ -38,7 +37,13 @@ export default function Dashboard() {
         fare: fare,
       }),
     });
+
     if (response.ok) {
+      addToast({
+        title: "Trip Confirmed",
+        description: `Your trip from ${selectedValue} to ${selectedValue2} has been confirmed.`,
+        color: "success",
+      });
       setIsTripConfirmed(true);
       return true;
     }
@@ -54,6 +59,7 @@ export default function Dashboard() {
         id: localStorage.getItem("id"),
       }),
     });
+    router.push("/dashboard");
   };
 
   const calculateFare = () => {
@@ -69,7 +75,7 @@ export default function Dashboard() {
         "uttara-south": 5,
         "mirpur-11": 8,
         "mirpur-10": 9,
-        "agargaon": 12,
+        agargaon: 12,
       };
       setFare(Math.abs(fareMap[selectedValue] - fareMap[selectedValue2]) * 10);
     }
@@ -77,7 +83,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     const getStatus = async () => {
-
       try {
         const response = await fetch(
           `/api/rapid-pass/${localStorage.getItem("id")}`
@@ -282,13 +287,6 @@ export default function Dashboard() {
                 onPress={() => {
                   setPlacement("top-center");
                   const trip = confirmTrip();
-                  if (trip) {
-                    addToast({
-                      title: "Trip Confirmed",
-                      description: `Your trip from ${selectedValue} to ${selectedValue2} has been confirmed.`,
-                      color: "success",
-                    });
-                  }
                 }}
               >
                 Confirm
