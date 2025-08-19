@@ -5,15 +5,20 @@ import React from "react";
 import { Form } from "@heroui/form";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
+import { useState } from "react";
 export default function Login() {
- 
+  const [isLoginSuccess, setIsLoginSuccess] = useState(true);
+  
   const router = useRouter();
   const handleLogin = async (formData: FormData) => {
     const result = await login(formData);
     if (result?.redirect) {
+      localStorage.setItem("id",`${result.id}`)
       router.push(result.redirect);
     }
     if (result?.status == 404) {
+      setIsLoginSuccess(false);
+      
     }
   };
 
@@ -34,15 +39,18 @@ export default function Login() {
       >
         <Input
           isRequired
-          errorMessage="Please enter a valid email"
+          isInvalid={!isLoginSuccess}
+          errorMessage="Wrong Email or Password"
           label="Email"
           labelPlacement="outside"
           name="email"
           placeholder="Enter your email"
           type="email"
+          
         />
         <Input
           isRequired
+          isInvalid={!isLoginSuccess}
           errorMessage="Wrong Password or Email"
           label="Password"
           labelPlacement="outside"

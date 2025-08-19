@@ -26,7 +26,7 @@ export const Navbar = () => {
   useEffect(() => {
     const userId = localStorage.getItem("id");
     setIsLoggedIn(!!userId);
-  },[]);
+  },[isLoggedIn]);
 
   return (
     <HeroUINavbar
@@ -38,11 +38,12 @@ export const Navbar = () => {
         <div className="flex h-14">
           <div className="h-auto w-full text-4xl flex items-center font-black text-primary-500">{`_METRO_`}</div>
           <div className="w-full flex flex-col justify-center items-end">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="flex gap-4">
               {isLoggedIn ? (
                 <>
                   <Button
-                    color="primary"
+                    
+                    color="danger"
                     variant="solid"
                     radius="full"
                     onPress={() => logout()}

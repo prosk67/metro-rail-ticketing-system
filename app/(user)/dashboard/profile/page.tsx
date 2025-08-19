@@ -16,6 +16,11 @@ import { useRouter } from "next/navigation";
 export default function Profile() {
   const [user, setUser] = React.useState([]);
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
+  useEffect(() => {
+    if (localStorage.getItem("id") === "null"|| !localStorage.getItem("id")) {
+      router.push("/login");
+    }
+  }, []);
   const approvalRequest = async () => {
     // Logic for requesting rapid pass
     await fetch("/api/users", {
@@ -220,7 +225,6 @@ export default function Profile() {
                   color="primary"
                   variant="faded"
                 />
-                
               </div>
             ))}
           </div>

@@ -24,6 +24,13 @@ export default function Dashboard() {
   );
   const [rapidPassStatus, setRapidPassStatus] = React.useState("NOPASS");
   const [fare, setFare] = React.useState(0);
+
+  useEffect(() => {
+    if (localStorage.getItem("id")==="null" || !localStorage.getItem("id")) {
+      router.push("/login");
+    }
+  }, []);
+
   const confirmTrip = async () => {
     const response = await fetch("/api/trip", {
       method: "POST",
@@ -110,10 +117,7 @@ export default function Dashboard() {
     getStatus();
   }, []);
 
-  //storing a dummy user data
-  useEffect(() => {
-    localStorage.setItem("id", 1);
-  }, []);
+ 
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", "),

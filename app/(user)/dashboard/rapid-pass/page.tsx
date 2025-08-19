@@ -25,13 +25,18 @@ export default function RapidPass() {
   const [isTransactionOk, setIsTransactionOk] = React.useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const [user, setUser] = React.useState([]);
+  useEffect(() => {
+    if (localStorage.getItem("id") === "null"|| !localStorage.getItem("id")) {
+      router.push("/login");
+    }
+  }, []);
   const handleTransaction = async (formData: FormData) => {
-    if(formData.get("amount")<0){
+    if (formData.get("amount") < 0) {
       addToast({
-          title: "Wrong Input",
-          description: "Recharge amount must be greater than 0",
-          color: "danger",
-        });
+        title: "Wrong Input",
+        description: "Recharge amount must be greater than 0",
+        color: "danger",
+      });
       return;
     }
     const data = await transaction(formData);
@@ -45,7 +50,6 @@ export default function RapidPass() {
           color: "success",
         });
       }
-      
     } else {
       throw new Error();
     }
@@ -118,7 +122,7 @@ export default function RapidPass() {
           `/api/rapid-pass/balance/${localStorage.getItem("id")}`
           // `/api/users/${localStorage.getItem("id")}`
         );
-        
+
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -217,20 +221,16 @@ export default function RapidPass() {
           <h1 className="text-5xl text-primary-500 font-black">Rapid Pass</h1>
           <div className="mt-10">
             <div>
-              <Chip
-                color="success"
-                variant="bordered"
-                size="lg"
-              >
+              <Chip color="success" variant="bordered" size="lg">
                 Available Balance
               </Chip>
               <div className="p-8 h-20 font-extrabold text-5xl">
                 {user.map((user) => (
                   <div key={user.id}>
-                  {user.balance}  <span className="text-sm text-success">BDT</span>
+                    {user.balance}{" "}
+                    <span className="text-sm text-success">BDT</span>
                   </div>
                 ))}
-                
               </div>
             </div>
           </div>
@@ -240,7 +240,6 @@ export default function RapidPass() {
               onSubmit={(e) => {
                 e.preventDefault();
                 handleTransaction(new FormData(e.currentTarget));
-                
               }}
             >
               <Input type="hidden" name="id" value={id} />
@@ -253,15 +252,12 @@ export default function RapidPass() {
                 radius="lg"
                 type="number"
                 size="lg"
-                
               />
               <Button
-                
                 color="success"
                 className="text-white mt-4"
                 key={"top-center"}
                 type="submit"
-                
               >
                 Recharge
               </Button>

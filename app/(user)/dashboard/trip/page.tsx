@@ -18,6 +18,11 @@ export default function Trip() {
   const [source, setSource] = React.useState([]);
   const [destination, setDestination] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("id")==="null"|| !localStorage.getItem("id")) {
+      router.push("/login");
+    }
+  }, []);
   const approvalRequest = async () => {
     // Logic for requesting rapid pass
     await fetch("/api/users", {
@@ -79,7 +84,6 @@ export default function Trip() {
           source.push(stationMap[`${trip?.src}`]);
           destination.push(stationMap[`${trip?.dest}`]);
         });
-        
       } catch (e) {
         console.log(e);
       }
@@ -129,7 +133,7 @@ export default function Trip() {
             {rapidPassStatus === "PENDING" && (
               <Button
                 isDisabled
-                color="default"
+                color="primary"
                 variant="solid"
                 className="w-full rounded-lg"
               >
@@ -187,7 +191,7 @@ export default function Trip() {
                       </span>
                     </div>
                     <div className="text-sm text-gray-600">
-                      {(new Date(trip?.issue_date)).toLocaleDateString()}
+                      {new Date(trip?.issue_date).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="text-right">
