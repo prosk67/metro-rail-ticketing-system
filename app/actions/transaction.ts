@@ -17,7 +17,8 @@ export async function transaction(formData: FormData) {
   console.log(user_id);
   const query2 = "UPDATE rapid_pass SET balance = balance + ? WHERE id = ?;";
   try{
-    db.query(query2,[req.amount, user_id[0].rapid_pass_id])
+  const res = await db.query(query2,[req.amount, user_id[0].rapid_pass_id])
+  console.log(res);
   }catch(e){
     throw new Error().message;
   }

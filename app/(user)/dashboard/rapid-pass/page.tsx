@@ -42,17 +42,16 @@ export default function RapidPass() {
     const data = await transaction(formData);
 
     if (data.status == 200) {
-      setIsTransactionOk(true);
-      if (isTransactionOk) {
+
+        fetchData();
         addToast({
           title: "Success",
           description: "Recharge was successful",
           color: "success",
         });
+        setIsTransactionOk(true);
       }
-    } else {
-      throw new Error();
-    }
+   
   };
   const approvalRequest = async () => {
     // Logic for requesting rapid pass
@@ -115,8 +114,7 @@ export default function RapidPass() {
 
   //   fetchBalance();
   // }, []);
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
       try {
         const response = await fetch(
           `/api/rapid-pass/balance/${localStorage.getItem("id")}`
@@ -136,6 +134,8 @@ export default function RapidPass() {
         console.log(e);
       }
     };
+  useEffect(() => {
+    
     fetchData();
   }, []);
   const router = useRouter();
