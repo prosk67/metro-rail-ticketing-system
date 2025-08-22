@@ -148,7 +148,7 @@ export default function RapidPass() {
           toastOffset={placement.includes("top") ? 60 : 0}
         />
       </div>
-      <div className="w-64 bg-cyan-50 h-[40em] sticky top-0 shadow-lg rounded-xl">
+      <div className="w-64 bg-cyan-50 h-[75vh] sticky top-0 shadow-lg rounded-xl">
         <div className="flex flex-col h-full">
           <div className="p-4 ">
             <h2 className="text-xl font-semibold">Dashboard</h2>
